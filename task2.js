@@ -9,8 +9,10 @@ let c,k,pl,pr;
 let b = [1, 1, 1, 1, 1, 1, 1];
 let y, s;
 let i;
+let z1r=0,z1l=0;
 const stars = [];
-const zombies = [];
+const zombiesr = [];
+const zombiesl=[];
 function drawMoon() {
     ctx.beginPath();
     ctx.fillStyle = 'white';
@@ -55,41 +57,45 @@ function drawStars() {
 }
 function initiateZombie() {
     switch (Math.ceil(Math.random() * 2)) {
-        case 1: zomb = zombl; y = 1340; s = -1;zl+=1; break;
-        default: zomb = zombr; y = -40; s = 1;zr+=1; break;
+        case 1: zomb = zombl; y = 1340; s = -1.5;zl+=1;zombiesl.push({  img: zomb,x: y,speed: s}); break;
+        default: zomb = zombr; y = -40; s = 1.5;zr+=1;zombiesr.push({  img: zomb,x: y,speed: s}); break;
     }
-    zombies.push({
-        img: zomb,
-        x: y,
-        speed: s
-    })
+    z1r=0;
+    z1l=0;
 }
 function updateZombies() {
-    zombies.forEach(zombie => {
-        if (zombie.img == zombr) {
-            var z1r=1;
+    zombiesr.forEach(zombie => {
+            z1r=0;
             for(i=0;i<zr-1;i+=1){
-                if(zombie.x+150==zombies[i].x){
-                    z1r=0;
+                if(zombie.x+30>=zombiesr[i].x){
+                    console.log(zombie.x);
+                    console.log(zombiesr[i].x);
+                    z1r=1;
+                    break;
                 }
             }
-            if (z1r&&(zombie.x >= 285 && zombie.x <= 375 && b[0] == 1) || (zombie.x >= 380 && zombie.x <= 470 && b[1] == 1) || (zombie.x >= 425 && zombie.x <= 515 && b[2] == 1)) {
+            if (z1r||((zombie.x >= 285 && zombie.x <= 375 && b[0] == 1) || (zombie.x >= 380 && zombie.x <= 470 && b[1] == 1) || (zombie.x >= 425 && zombie.x <= 515 && b[2] == 1))) {
 
             }
             else {
                 zombie.x += zombie.speed;
             }
-        }
-        else if (zombie.img == zombl) {
-            if (z1r&&(zombie.x >= 1005 && zombie.x <= 1095 && b[3] == 1) || (zombie.x >= 910 && zombie.x <= 1000 && b[4] == 1) || (zombie.x >= 865 && zombie.x <= 955 && b[5] == 1) || (zombie.x >= 975 && zombie.x <= 1065 && b[6] == 1)) {
+        })
+        zombiesl.forEach(zombie=>{
+            z1l=0;
+            for(i=0;i<zl-1;i+=1){
+                if(zombie.x-30<=zombiesl[i].x){
+                    z1l=1;
+                    break;
+                }
+            }
+            if (z1l||((zombie.x >= 1005 && zombie.x <= 1095 && b[3] == 1) || (zombie.x >= 910 && zombie.x <= 1000 && b[4] == 1) || (zombie.x >= 865 && zombie.x <= 955 && b[5] == 1) || (zombie.x >= 975 && zombie.x <= 1065 && b[6] == 1))) {
 
             }
             else {
                 zombie.x += zombie.speed;
             }
-        }
-    })
-}
+        })}
 body.addEventListener('keydown',(e)=>{
     switch(e.keyCode){
         case 37:k='l';break;
@@ -100,7 +106,10 @@ body.addEventListener('keyup',()=>{
     k='n';
 })
 function drawZombies() {
-    zombies.forEach(zombie => {
+    zombiesr.forEach(zombie => {
+        ctx.drawImage(zombie.img, zombie.x, 500, 150, 200);
+    })
+    zombiesl.forEach(zombie => {
         ctx.drawImage(zombie.img, zombie.x, 500, 150, 200);
     })
 }
@@ -156,7 +165,7 @@ function animateStars() {
     updatePlayer();
     requestAnimationFrame(animateStars);
 }
-let zombieSpawn = setInterval(initiateZombie, 5000);
+let zombieSpawn = setInterval(initiateZombie, 4000);
 initiateStars();
 createPlayer();
 animateStars(); 
